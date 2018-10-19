@@ -102,7 +102,8 @@ public class Alea extends Brain {
 
 	public void step() {
 
-		sendLogMessage(myX + ", " + myY + " Etat : " + etat);
+//		sendLogMessage(myX + ", " + myY + " Etat : " + etat);
+		sendLogMessage("Etat : " + etat);
 
 //		for (IRadarResult o : detectRadar()) {
 //			if (o.getObjectType().name().equals("BULLET")) {
@@ -141,9 +142,14 @@ public class Alea extends Brain {
 //				}
 //			}
 		}
-		
+
 		System.out.println(alea2);
-		
+
+//		if (isWall()) {
+//			myMoveBack();
+//			return;
+//		} else {
+
 		if (compteurAlea >= 1000 + alea2) {
 			// alea = (int) (Math.random() * (1000 - 0));
 			// AleaTourne = false;
@@ -153,19 +159,28 @@ public class Alea extends Brain {
 		} else {
 			if (compteurAlea >= 1000) {
 //				alea = (int) (Math.random() * (2 - 0));
-				
+
 				if (alea == 1) {
 					stepTurn(Parameters.Direction.RIGHT);
+					etat = "droite";
 				} else {
 					stepTurn(Parameters.Direction.LEFT);
+					etat = "gauche";
 				}
 			} else {
-				compteurAlea++;
-				myMove();
+				// compteurAlea++;
+				if (!nothingAhead()) {
+					myMove();
+					etat = "Avance";
+				} else {
+					myMoveBack();
+					etat = "Reculer";
+				}
 			}
 			compteurAlea++;
 			return;
 		}
+	}
 
 //		if (alea > 0 && alea <= 400) {
 //			myMove();
@@ -194,8 +209,8 @@ public class Alea extends Brain {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// tire = false;
-		// } else {
+	// tire = false;
+	// } else {
 //		tire = true;
 //		if (robotNum == 2) {
 //			if (myX == 750) {
@@ -284,8 +299,8 @@ public class Alea extends Brain {
 //				return;
 //			}
 //		}
-		// }
-	}
+	// }
+//	}
 
 	private boolean nothingAhead() {
 		return (detectFront().getObjectType() == IFrontSensorResult.Types.NOTHING);

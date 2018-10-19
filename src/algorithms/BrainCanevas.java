@@ -21,6 +21,7 @@ public class BrainCanevas extends Brain {
 	private boolean tire = true;
 	private int compteur = 0;
 	private int compteurTailleMap = 0;
+	private int compteurColision = 0;
 	private static final double HEADINGPRECISION = 0.001;
 	private static final double ANGLEPRECISION = 0.1;
 	private double myX, myY;
@@ -35,6 +36,7 @@ public class BrainCanevas extends Brain {
 		nbrTourPion = 0;
 		compteurTailleMap = 0;
 		tire = true;
+		int compteurColision = 0;
 
 		if (robotNum == 0) {
 			myX = Parameters.teamAMainBot1InitX;
@@ -67,33 +69,41 @@ public class BrainCanevas extends Brain {
 
 		sendLogMessage(myX + ", " + myY + " State : " + state);
 
-//		for (IRadarResult o : detectRadar()) {
-//			if (o.getObjectType().name().equals("BULLET")) {
-//				myX -= Parameters.teamBMainBotSpeed * Math.cos(getHeading());
-//				myY -= Parameters.teamBMainBotSpeed * Math.sin(getHeading());
-//				moveBack();
-//				return;
-//			}
-//		}
-
-		// if (tire) {
-		for (IRadarResult o : detectRadar()) {
-//			if (o.getObjectType().TeamMainBot == null && o.getObjectType().TeamSecondaryBot == null) {
-//				fire(Math.random() * Math.PI * 2);
-//				return;
-//			}
-			if (o.getObjectType().name().equals("OpponentMainBot")) {
-				fire(o.getObjectDirection());
-				return;
-			} else {
-				if (o.getObjectType().name().equals("OpponentSecondaryBot")) {
-					fire(o.getObjectDirection());
+		if (robotID == 3 || robotID == 4) {
+			for (IRadarResult p : detectRadar()) {
+				if (p.getObjectType().name().equals("BULLET")) {
+					myMoveBack();
 					return;
 				}
 			}
 		}
-		// tire = false;
-		// } else {
+		if (robotID < 4) {
+			for (IRadarResult o : detectRadar()) {
+				if (o.getObjectType().name().equals("OpponentMainBot")) {
+					fire(o.getObjectDirection());
+					return;
+				} else {
+					if (o.getObjectType().name().equals("OpponentSecondaryBot")) {
+						fire(o.getObjectDirection());
+						return;
+					}
+				}
+			}
+		}
+
+		if (nothingAhead() || state == 3) {
+			if (compteurColision > 1000) {
+				compteurColision = 0;
+				//stepTurn(Parameters.Direction.LEFTTURNFULLANGLE);
+				state = 7;
+				return;
+			} else {
+				// stepTurn(Parameters.Direction.RIGHT);
+				compteurColision++;
+				// return;
+			}
+		}
+
 		tire = true;
 		if (robotNum == 2) {
 			if (myX == 750) {
@@ -142,6 +152,7 @@ public class BrainCanevas extends Brain {
 			return;
 		}
 		if (state == 3 && !nothingAhead()) {
+			//myMove();
 			state = 4;
 			return;
 		}
@@ -182,7 +193,17 @@ public class BrainCanevas extends Brain {
 				return;
 			}
 		}
-		// }
+		if (state == 7) {
+			int alea = (int) (Math.random() * (0 - 100));
+			stepTurn(Parameters.Direction.RIGHT);
+			nbrTourPion++;
+			if (nbrTourPion >= alea) {
+				myMove();
+				nbrTourPion = 0;
+				state = 0;
+			}
+			return;
+		}
 	}
 
 	private boolean nothingAhead() {
@@ -214,21 +235,16 @@ public class BrainCanevas extends Brain {
 	}
 
 	private void myMove() {
-		Boolean recule = false;
-		for (IRadarResult o : detectRadar()) {
-			if (o.getObjectType().name().equals("BULLET")) {
-				recule = true;
-			}
-		}
-		if (recule) {
-			myX -= Parameters.teamBMainBotSpeed * Math.cos(getHeading());
-			myY -= Parameters.teamBMainBotSpeed * Math.sin(getHeading());
-			moveBack();
-		} else {
-			myX += Parameters.teamBMainBotSpeed * Math.cos(getHeading());
-			myY += Parameters.teamBMainBotSpeed * Math.sin(getHeading());
-			move();
-		}
+
+		myX += Parameters.teamBMainBotSpeed * Math.cos(getHeading());
+		myY += Parameters.teamBMainBotSpeed * Math.sin(getHeading());
+		move();
+	}
+
+	private void myMoveBack() {
+		myX -= Parameters.teamBMainBotSpeed * Math.cos(getHeading());
+		myY -= Parameters.teamBMainBotSpeed * Math.sin(getHeading());
+		moveBack();
 	}
 
 	private boolean isSameDirection(double dir1, double dir2) {
