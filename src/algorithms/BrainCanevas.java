@@ -73,141 +73,122 @@ public class BrainCanevas extends Brain {
 
 		sendLogMessage(myX + ", " + myY + " State : " + state);
 
-		if (tire) {
-			for (IRadarResult o : detectRadar()) {
-				if (o.getObjectType().name().equals("OpponentMainBot")
-						|| o.getObjectType().name().equals("OpponentSecondaryBot")) {
+//		for (IRadarResult o : detectRadar()) {
+//			if (o.getObjectType().name().equals("BULLET")) {
+//				myX -= Parameters.teamBMainBotSpeed * Math.cos(getHeading());
+//				myY -= Parameters.teamBMainBotSpeed * Math.sin(getHeading());
+//				moveBack();
+//				return;
+//			}
+//		}
+
+		// if (tire) {
+		for (IRadarResult o : detectRadar()) {
+//			if (o.getObjectType().TeamMainBot == null && o.getObjectType().TeamSecondaryBot == null) {
+//				fire(Math.random() * Math.PI * 2);
+//				return;
+//			}
+			if (o.getObjectType().name().equals("OpponentMainBot")) {
+				fire(o.getObjectDirection());
+				return;
+			} else {
+				if (o.getObjectType().name().equals("OpponentSecondaryBot")) {
 					fire(o.getObjectDirection());
-				}
-			}
-			tire = false;
-		} else {
-			tire = true;
-			if (robotNum == 2) {
-				if (myX == 750) {
-					// if (demiTour == false) {
-					state = 6;
-					// demiTour = true;
-					// }
-				}
-
-				if (myX == 1500) {
-					state = 6;
-				}
-
-				if (myX == 225) {
-					state = 6;
-				}
-			}
-
-//		if (robotNum == 0) {
-//			if (state == 0) {
-//				compteurTailleMap++;
-//				stepTurn(Parameters.Direction.LEFT);
-//				if (isHeadingNorth()) {
-//					state = 1;
-//					compteurTailleMap = 0;
-//				}
-//				return;
-//			}
-//			if (state == 1 && nothingAhead()) {
-//				myMove();
-//				return;
-//			}
-//			if (state == 1 && !nothingAhead()) {
-////				compteurTailleMap++;
-//				stepTurn(Parameters.Direction.LEFT);
-//				if (isHeadingSouth() && !nothingAhead()) {
-//					state = 2;
-//				}				
-//				return;
-//			}
-//			if(state == 2) {
-////				stepTurn(Parameters.Direction.LEFT);
-////				ifisHeadingSouth()()
-////				return;
-//			}
-//		}
-//		
-//		if(robotNum == 1) {
-//			myMove();
-//			return;
-//		}
-
-			if (state == 0 && !isHeadingSouth()) {
-				stepTurn(Parameters.Direction.RIGHT);
-				// sendLogMessage(compteur + "pas.");
-				return;
-			}
-			if (state == 0 && isHeadingSouth()) {
-				state = 1;
-				return;
-			}
-			if (state == 1 && nothingAhead()) {
-				compteur++;
-				myMove();
-				return;
-			}
-			if (state == 1 && !nothingAhead()) {
-				state = 2;
-				return;
-			}
-			if (state == 2 && !isHeadingEast()) {
-				stepTurn(Parameters.Direction.LEFT);
-				// sendLogMessage(compteur + "pas.");
-				return;
-			}
-			if (state == 2 && isHeadingEast()) {
-				state = 3;
-				return;
-			}
-			if (state == 3 && nothingAhead()) {
-				compteur++;
-				myMove();
-				return;
-			}
-			if (state == 3 && !nothingAhead()) {
-				state = 4;
-				return;
-			}
-
-			if (state == 4 && !isHeadingNorth()) {
-				stepTurn(Parameters.Direction.LEFT);
-				// sendLogMessage(compteur + "pas.");
-				return;
-			}
-			if (state == 4 && nothingAhead()) {
-				state = 5;
-				return;
-			}
-			if (state == 5 && nothingAhead()) {
-				compteur++;
-				myMove();
-				return;
-			}
-			if (state == 5 && !nothingAhead()) {
-				state = 0;
-				return;
-			}
-
-			if (robotNum == 2) {
-				if (state == 6) {
-					myMove();
-					state = 7;
-					return;
-				}
-
-				if (state == 7) {
-					stepTurn(Parameters.Direction.RIGHT);
-					nbrTourPion++;
-					if (nbrTourPion == 200) {
-						nbrTourPion = 0;
-						state = 0;
-					}
 					return;
 				}
 			}
 		}
+		// tire = false;
+		// } else {
+		tire = true;
+		if (robotNum == 2) {
+			if (myX == 750) {
+				state = 6;
+			}
+
+			if (myX == 1500) {
+				state = 6;
+			}
+
+			if (myX == 225) {
+				state = 6;
+			}
+		}
+
+		if (state == 0 && !isHeadingSouth()) {
+			stepTurn(Parameters.Direction.RIGHT);
+			// sendLogMessage(compteur + "pas.");
+			return;
+		}
+		if (state == 0 && isHeadingSouth()) {
+			state = 1;
+			return;
+		}
+		if (state == 1 && nothingAhead()) {
+			compteur++;
+			myMove();
+			return;
+		}
+		if (state == 1 && !nothingAhead()) {
+			state = 2;
+			return;
+		}
+		if (state == 2 && !isHeadingEast()) {
+			stepTurn(Parameters.Direction.LEFT);
+			// sendLogMessage(compteur + "pas.");
+			return;
+		}
+		if (state == 2 && isHeadingEast()) {
+			state = 3;
+			return;
+		}
+		if (state == 3 && nothingAhead()) {
+			compteur++;
+			myMove();
+			return;
+		}
+		if (state == 3 && !nothingAhead()) {
+			state = 4;
+			return;
+		}
+
+		if (state == 4 && !isHeadingNorth()) {
+			stepTurn(Parameters.Direction.LEFT);
+			// sendLogMessage(compteur + "pas.");
+			return;
+		}
+		if (state == 4 && nothingAhead()) {
+			state = 5;
+			return;
+		}
+		if (state == 5 && nothingAhead()) {
+			compteur++;
+			myMove();
+			return;
+		}
+		if (state == 5 && !nothingAhead()) {
+			state = 0;
+			return;
+		}
+
+		if (robotNum == 2) {
+			if (state == 6) {
+				myMove();
+				state = 7;
+				return;
+			}
+
+			if (state == 7) {
+				stepTurn(Parameters.Direction.RIGHT);
+				nbrTourPion++;
+				if (nbrTourPion == 200) {
+					nbrTourPion = 0;
+					state = 0;
+				}
+				return;
+			}
+		}
+		// }
 	}
 
 	private boolean nothingAhead() {
