@@ -92,27 +92,6 @@ public class Parameters {
                              teamBSecondaryBot2InitY = 1200, //1 unit = 1mm, coordinate of central point
                              teamBSecondaryBot2InitHeading = WEST; //clockwise trigonometric unit, according to screen pixel coordinate reference
   
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  
-//  teamBSecondaryBot3InitX = 2600, //1 unit = 1mm, coordinate of central point
-//  teamBSecondaryBot3InitY = 1500, //1 unit = 1mm, coordinate of central point
-//  teamBSecondaryBot3InitHeading = WEST; //clockwise trigonometric unit, according to screen pixel coordinate reference
-  
-//  public static final String teamBThirdBotBrainClassName = "algorithms.Stage1"; //class given by name; is supposed to extends robotsimulator.Brain
-//  public static final String teamBThirdBotAvatar = "avatars/playmobile5.png"; //path relative to location of ant build.xml file
-//  public static final double teamBThirdBotRadius = 50, //1 unit = 1mm, body radius
-//		  					 teamBThirdBotFrontalDetectionRange = 500, //1 unit = 1mm, range of frontal sensor
-//		  					 teamBThirdBotFrontalDetectionAngle = 0, //UNUSED AT THE MOMENT, frontal sensor detection angle is suppoed to be absolute
-//		  					 teamBThirdBotSpeed = 3, //1 unit = 1mm, distance performed at step movement
-//		  					 teamBThirdBotStepTurnAngle = 0.01*Math.PI, //trigonometric unit, angle performed at step turn action
-//		  					 teamBThirdBotHealth = 100, //FICTIONAL SIMOVIES
-//		  					 teamBThirdBot1InitX = 2500, //1 unit = 1mm, coordinate of central point
-//		  					 teamBThirdBot1InitY = 800, //1 unit = 1mm, coordinate of central point
-//		  					 teamBThirdBot1InitHeading = WEST, //clockwise trigonometric unit, according to screen pixel coordinate reference
-//		  					 teamBThirdBot2InitX = 2500, //1 unit = 1mm, coordinate of central point
-//		  					 teamBThirdBot2InitY = 1200, //1 unit = 1mm, coordinate of central point
-//		  					 teamBThirdBot2InitHeading = WEST; //clockwise trigonometric unit, according to screen pixel coordinate reference
-  
   //-----------------------//
   //---BULLET-PARAMETERS---//
   //-----------------------//
