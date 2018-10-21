@@ -67,7 +67,8 @@ public class BrainCanevas extends Brain {
 
 	public void step() {
 
-		sendLogMessage(myX + ", " + myY + " State : " + state);
+		// sendLogMessage(myX + ", " + myY + " State : " + state);
+		sendLogMessage("Robot : " + robotNum + " X : " + myX + "Y : " + myY);
 
 		if (robotID == 3 || robotID == 4) {
 			for (IRadarResult p : detectRadar()) {
@@ -94,7 +95,7 @@ public class BrainCanevas extends Brain {
 		if (nothingAhead()) {
 			if (compteurColision > 1000) {
 				compteurColision = 0;
-				//stepTurn(Parameters.Direction.LEFTTURNFULLANGLE);
+				// stepTurn(Parameters.Direction.LEFTTURNFULLANGLE);
 				state = 7;
 				return;
 			} else {
@@ -152,7 +153,7 @@ public class BrainCanevas extends Brain {
 			return;
 		}
 		if (state == 3 && !nothingAhead()) {
-			//myMove();
+			// myMove();
 			state = 7;
 			return;
 		}
