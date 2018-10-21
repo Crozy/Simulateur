@@ -91,7 +91,7 @@ public class BrainCanevas extends Brain {
 			}
 		}
 
-		if (nothingAhead() || state == 3) {
+		if (nothingAhead()) {
 			if (compteurColision > 1000) {
 				compteurColision = 0;
 				//stepTurn(Parameters.Direction.LEFTTURNFULLANGLE);
@@ -153,7 +153,7 @@ public class BrainCanevas extends Brain {
 		}
 		if (state == 3 && !nothingAhead()) {
 			//myMove();
-			state = 4;
+			state = 7;
 			return;
 		}
 
