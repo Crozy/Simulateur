@@ -18,7 +18,13 @@ public class theAlgo extends Brain {
 	}
 
 	private double myX, myY;
-	private int state = 0;
+
+	// Compteur pour se débloquer
+	private int compteurBloque = 0;
+
+	// Compteur de tirs
+	private int compteurTirs = 0;
+
 	private static final double HEADINGPRECISION = 0.001;
 	private String action = "";
 
@@ -27,7 +33,7 @@ public class theAlgo extends Brain {
 
 		String action = "";
 		robotNum = robotID;
-		state = 0;
+		compteurBloque = 0;
 
 		if (robotNum == 0) {
 			myX = Parameters.teamAMainBot1InitX;
@@ -58,30 +64,53 @@ public class theAlgo extends Brain {
 
 	public void step() {
 
-		sendLogMessage("Robot : " + robotNum + " Action : " + action + " X : " + myX + "Y : " + myY);
+		sendLogMessage(action + " X : " + myX + " Y : " + myY);
 
-		for (IRadarResult o : detectRadar()) {
-			if (o.getObjectType().name().equals("BULLET")) {
-				myMoveBack();
-				action = "Esquive Ball";
-				return;
-			}
-			if (o.getObjectType().name().equals("OpponentMainBot")) {
-				fire(o.getObjectDirection());
-				action = "Tire sur un MainBot";
-				return;
+		if (compteurBloque > 500) {
+			if (isHeadingSouth() || isHeadingEast()) {
+				compteurBloque = 0;
 			} else {
-				if (o.getObjectType().name().equals("OpponentSecondaryBot")) {
-					fire(o.getObjectDirection());
-					action = "Tire sur un SecondaryBot";
-					return;
-				}
+				action = "Essaye de se débloquer";
+				stepTurn(Parameters.Direction.RIGHT);
+				return;
 			}
-
 		}
 
+		for (IRadarResult o : detectRadar()) {
+			if (robotNum > 2) {
+				if (o.getObjectType().name().equals("BULLET")) {
+					myMoveBack();
+					action = "Esquive Ball";
+					return;
+				}
+			} else {
+				if (o.getObjectType().name().equals("OpponentMainBot")
+						|| o.getObjectType().name().equals("OpponentSecondaryBot")) {
+
+					if (o.getObjectType().name().equals("OpponentMainBot")) {
+						fire(o.getObjectDirection());
+						action = "Tire sur un MainBot";
+						return;
+					} else {
+						if (o.getObjectType().name().equals("OpponentSecondaryBot")) {
+							fire(o.getObjectDirection());
+							action = "Tire sur un SecondaryBot";
+							return;
+						}
+					}
+				} else {
+					if (o.getObjectType().name().equals("BULLET")) {
+						myMoveBack();
+						action = "Esquive Ball";
+						return;
+					}
+				}
+			}
+		}
+		compteurTirs = 0;
 		if (nothingAhead()) {
 			if (isHeadingSouth() || isHeadingEast()) {
+				compteurBloque++;
 				action = "Move ";
 				myMove();
 				return;
@@ -94,6 +123,14 @@ public class theAlgo extends Brain {
 			stepTurn(Parameters.Direction.RIGHT);
 			action = "Tourne à droite ";
 			return;
+		}
+	}
+
+	private void goDiection(double go) {
+		if (isHeading(go)) {
+			myMove();
+		} else {
+			stepTurn(Parameters.Direction.RIGHT);
 		}
 	}
 
@@ -123,6 +160,7 @@ public class theAlgo extends Brain {
 	}
 
 	private boolean isHeading(double dir) {
+		// System.out.println(Math.abs(Math.sin(getHeading() - dir)));
 		return Math.abs(Math.sin(getHeading() - dir)) < HEADINGPRECISION;
 	}
 }
