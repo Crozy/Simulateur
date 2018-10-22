@@ -4,6 +4,8 @@ import robotsimulator.Brain;
 
 import java.util.Timer;
 
+//import javax.jws.soap.SOAPBinding.ParameterStyle;
+
 import characteristics.IFrontSensorResult;
 import characteristics.IRadarResult;
 import characteristics.Parameters;
@@ -27,6 +29,9 @@ public class TheAlgo extends Brain {
 
 	// Compteur départ des 3 robots de combat
 	private int compteurRobotCombat = 0;
+
+	// Compteur placement des robot tank
+	private int compteuPracementTank = 0;
 
 	private static final double HEADINGPRECISION = 0.001;
 	private String action = "";
@@ -67,8 +72,9 @@ public class TheAlgo extends Brain {
 
 	public void step() {
 
-		sendLogMessage(action + " X : " + myX + " Y : " + myY);
-		
+		sendLogMessage("robot : " + robotNum + " Action : " + action + " X : " + myX + " Y : " + myY);
+
+		// Petit retardateur pour que les 3 rebots avance en même temps
 		if (compteurRobotCombat < 17 && robotNum < 3) {
 			compteurRobotCombat++;
 			return;
@@ -85,13 +91,37 @@ public class TheAlgo extends Brain {
 		}
 
 		for (IRadarResult o : detectRadar()) {
-			if (robotNum > 2) {
-				if (o.getObjectType().name().equals("BULLET")) {
-					myMoveBack();
-					action = "Esquive Ball";
-					return;
-				}
-			} else {
+//			if (robotNum > 2) {
+//				if (o.getObjectType().name().equals("BULLET")) {
+//					myMoveBack();
+//					action = "Esquive Ball";
+//					return;
+//				} else {
+//					if (o.getObjectType().name().equals("OpponentMainBot")
+//							|| o.getObjectType().name().equals("OpponentSecondaryBot")) {
+//						if (isHeadingEast()) {
+//							if (!isHeadingSouth()) {
+//								stepTurn(Parameters.Direction.RIGHT);
+//								return;
+//							} else {
+//								myMove();
+//								return;
+//							}
+//						} else {
+//							if (isHeadingSouth()) {
+//								if (!isHeadingEast()) {
+//									stepTurn(Parameters.Direction.LEFT);
+//									return;
+//								} else {
+//									myMove();
+//									return;
+//								}
+//							}
+//						}
+//					}
+//				}
+//			} else {
+			if (robotNum < 3) {
 				if (o.getObjectType().name().equals("OpponentMainBot")
 						|| o.getObjectType().name().equals("OpponentSecondaryBot")) {
 
@@ -106,16 +136,16 @@ public class TheAlgo extends Brain {
 							return;
 						}
 					}
-				} else {
-					if (o.getObjectType().name().equals("BULLET")) {
-						myMoveBack();
-						action = "Esquive Ball";
-						return;
-					}
+				}
+			} else {
+				if (o.getObjectType().name().equals("BULLET")) {
+					myMoveBack();
+					action = "Esquive Ball";
+					return;
 				}
 			}
+
 		}
-		compteurTirs = 0;
 		if (nothingAhead()) {
 			if (isHeadingSouth() || isHeadingEast()) {
 				compteurBloque++;
