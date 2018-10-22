@@ -25,6 +25,9 @@ public class TheAlgo extends Brain {
 	// Compteur de tirs
 	private int compteurTirs = 0;
 
+	// Compteur départ des 3 robots de combat
+	private int compteurRobotCombat = 0;
+
 	private static final double HEADINGPRECISION = 0.001;
 	private String action = "";
 
@@ -65,6 +68,11 @@ public class TheAlgo extends Brain {
 	public void step() {
 
 		sendLogMessage(action + " X : " + myX + " Y : " + myY);
+		
+		if (compteurRobotCombat < 17 && robotNum < 3) {
+			compteurRobotCombat++;
+			return;
+		}
 
 		if (compteurBloque > 500) {
 			if (isHeadingSouth() || isHeadingEast()) {
