@@ -8,12 +8,12 @@ import characteristics.IFrontSensorResult;
 import characteristics.IRadarResult;
 import characteristics.Parameters;
 
-public class theAlgo extends Brain {
+public class TheAlgo extends Brain {
 
 	private static int robotID;
 	private int robotNum = 0;
 
-	public theAlgo() {
+	public TheAlgo() {
 		super();
 	}
 
