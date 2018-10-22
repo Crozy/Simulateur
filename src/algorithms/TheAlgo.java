@@ -1,6 +1,7 @@
 package algorithms;
 
 import robotsimulator.Brain;
+import robotsimulator.FrontSensorResult;
 
 import java.util.Timer;
 
@@ -19,6 +20,8 @@ public class TheAlgo extends Brain {
 		super();
 	}
 
+	private int state = 0;
+
 	private double myX, myY;
 
 	// Compteur pour se débloquer
@@ -30,24 +33,12 @@ public class TheAlgo extends Brain {
 	// Compteur départ des 3 robots de combat
 	private int compteurRobotCombat = 0;
 
-	// Compteur départ des 2 robot tank
-	private int compteurTank = 0;
-	// private boolean aTourner = false;
-
 	// Compteur placement des robot tank
 	private int compteuPlacementTank1, compteuPlacementTank2 = 0;
+	private boolean mouvementDeDepart = false;
 
 	// Compteur move
 	private int compteurMove = 0;
-
-	// Compteur pour tourner
-	// private int compteurTourne = 0;
-
-	// Pour savoir si le robot a tourné
-	// private Boolean tourne = false;
-
-	// Compteur pour savoir quand le robot 4 doit tourner
-	// private int avanceRobot4 = 0;
 
 	private static final double HEADINGPRECISION = 0.001;
 	private String action = "";
@@ -90,29 +81,60 @@ public class TheAlgo extends Brain {
 
 		// x 3000 y 2000
 
-		//sendLogMessage("CompteurMove : " + compteurMove + " Action : " + action + " X : " + myX + " Y : " + myY);
+		// sendLogMessage("CompteurMove : " + compteurMove + " Action : " + action + " X
+		// : " + myX + " Y : " + myY);
 
 		sendLogMessage("CompteurMove" + compteurMove + " Action : " + action);
 
-		if (robotNum == 3 && compteurMove >= 100) {
+		if (robotNum == 3) {
 			if (compteuPlacementTank1 <= 50) {
+				// if (!isHeadingSouth()) {
 				stepTurn(Parameters.Direction.LEFT);
 				compteuPlacementTank1++;
+				// state = 1;
 				return;
 			}
 		}
-		
-		if (robotNum == 4 && compteurMove >= 100) {
-//			if (compteuPlacementTank2 < 20) {
+
+		if (state == 0 && robotNum == 4 && mouvementDeDepart == false) {
+			// if (compteuPlacementTank2 <= 50) {
 			if (!isHeadingSouth()) {
-				stepTurn(Parameters.Direction.LEFT);
+				stepTurn(Parameters.Direction.RIGHT);
+				action = "Mouvement de départ tourne a droite (1)";
 				compteuPlacementTank2++;
 				return;
+			} else {
+				state = 1;
 			}
 		}
-		
+
+		if (robotNum == 4 && state == 1 && mouvementDeDepart == false) {
+			if (nothingAhead() && isHeadingSouth()) {
+				myMove();
+				action = "Mouvement de départ avance";
+				return;
+			}
+			if (!isHeadingEast()) {
+				stepTurn(Parameters.Direction.LEFT);
+				action = "Mouvement de départ tourne a droite (2)";
+				return;
+			}
+			if (isHeadingEast()) {
+				mouvementDeDepart = true;
+			}
+
+		}
+
+//		if(robotNum == 3) {
+//			if(detectFront().getObjectType().name().equals("WALL")) {
+//				if(!isHeadingEast()) {
+//				stepTurn(Parameters.Direction.RIGHT);
+//				return;
+//				}
+//			}
+//		}
+
 		if (compteurMove > 2550) {
-			myMoveBack();
 			compteurMove = 0;
 		}
 		if (compteurMove > 2500) {
@@ -127,35 +149,16 @@ public class TheAlgo extends Brain {
 			return;
 		}
 
-//		if (robotNum == 3 || robotNum == 4) {
-//			if (compteurTank < 50) {
-//				compteurTank++;
-//				if (robotNum == 3) {
-//					stepTurn(Parameters.Direction.LEFT);
-//					return;
-//				}
-//				if (robotNum == 4) {
-//					if (avanceRobot4 < 100) {
-//						myMove();
-//						return;
-//					} else {
-//						stepTurn(Parameters.Direction.RIGHT);
-//						return;
-//					}
-//				}
+//		if (compteurBloque > 500) {
+//			if (isHeadingSouth() || isHeadingEast()) {
+//				compteurBloque = 0;
+//			} else {
+//				action = "Essaye de se débloquer";
+//				stepTurn(Parameters.Direction.RIGHT);
+//				compteurMove = 0;
+//				return;
 //			}
 //		}
-
-		if (compteurBloque > 500) {
-			if (isHeadingSouth() || isHeadingEast()) {
-				compteurBloque = 0;
-			} else {
-				action = "Essaye de se débloquer";
-				stepTurn(Parameters.Direction.RIGHT);
-				compteurMove = 0;
-				return;
-			}
-		}
 
 		for (IRadarResult o : detectRadar()) {
 			if (robotNum < 3) {
@@ -183,6 +186,9 @@ public class TheAlgo extends Brain {
 			}
 
 		}
+
+		///////////////////////////////////////////////////////////////////
+		// if (state == 4) {
 		if (nothingAhead()) {
 			if (isHeadingSouth() || isHeadingEast()) {
 				compteurBloque++;
@@ -191,8 +197,8 @@ public class TheAlgo extends Brain {
 				return;
 			} else {
 				stepTurn(Parameters.Direction.RIGHT);
-				compteurMove = 0;
 				action = "Tourne à droite car pas droit";
+				compteurMove = 0;
 				return;
 			}
 		} else {
@@ -201,6 +207,8 @@ public class TheAlgo extends Brain {
 			action = "Tourne à droite ";
 			return;
 		}
+		// }
+		//////////////////////////////////////////////////
 	}
 
 	private void goDiection(double go) {
@@ -213,19 +221,10 @@ public class TheAlgo extends Brain {
 	}
 
 	private void myMove() {
-//		if (compteurMove > 100) {
-//			if (tourne == false) {
-//				tourne();
-//			} else {
-//				compteurMove = 0;
-//			}
-//			return;
-		// } else {
 		compteurMove++;
 		myX += Parameters.teamBMainBotSpeed * Math.cos(getHeading());
 		myY += Parameters.teamBMainBotSpeed * Math.sin(getHeading());
 		move();
-		// }
 	}
 
 	private void myMoveBack() {
@@ -233,17 +232,6 @@ public class TheAlgo extends Brain {
 		myY -= Parameters.teamBMainBotSpeed * Math.sin(getHeading());
 		moveBack();
 	}
-
-//	private void tourne() {
-//		if (compteurTourne < 5000) {
-//			stepTurn(Parameters.Direction.LEFT);
-//			compteurTourne++;
-//			tourne = false;
-//		} else {
-//			compteurTourne = 0;
-//			tourne = true;
-//		}
-//	}
 
 	private boolean nothingAhead() {
 		return (detectFront().getObjectType() == IFrontSensorResult.Types.NOTHING);
@@ -258,7 +246,10 @@ public class TheAlgo extends Brain {
 	}
 
 	private boolean isHeading(double dir) {
-		// System.out.println(Math.abs(Math.sin(getHeading() - dir)));
 		return Math.abs(Math.sin(getHeading() - dir)) < HEADINGPRECISION;
+	}
+
+	private boolean isWall() {
+		return (detectFront().getObjectType() == IFrontSensorResult.Types.WALL);
 	}
 }
