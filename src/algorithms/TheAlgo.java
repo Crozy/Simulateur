@@ -50,6 +50,11 @@ public class TheAlgo extends Brain {
 	private boolean moveBack = false;
 	private int compteurMoveBack = 0;
 
+	private double directionEnnemi = 0;
+	private boolean positionDetecter = false;
+
+	private boolean avanceDebut = false;
+
 	public void activate() {
 		// ---PARTIE A MODIFIER/ECRIRE---//
 
@@ -93,15 +98,41 @@ public class TheAlgo extends Brain {
 
 		sendLogMessage("CompteurMove" + compteurMove + " Action : " + action);
 
-		if (robotNum > 2 && moveBack == true) {
+//		if (positionDetecter == false) {
+//			for (IRadarResult o : detectRadar()) {
+//				if (o.getObjectType().name().equals("OpponentMainBot")
+//						|| o.getObjectType().name().equals("OpponentSecondaryBot")) {
+//					directionEnnemi = o.getObjectDirection();
+//					positionDetecter = true;
+//				}
+//			}
+//		}
+//
+//		if (robotNum == 4 && directionEnnemi != 0) {
+//			if (!isHeading(directionEnnemi)) {
+//				stepTurn(Parameters.Direction.LEFT);
+//				action = "Tourne pour suivre ennemi";
+//				return;
+//			} else {
+//				myMove();
+//				action = "Suit ennemi";
+//				return;
+//			}
+//		}
+
+		if (robotNum > 2 && moveBack == true)
+
+		{
 			if (compteurMoveBack < 200) {
 				compteurMoveBack++;
 				myMoveBack();
+				action = "Se sauve";
 				return;
 			} else {
-				if (compteurTourne < 20) {
+				if (compteurTourne < 50) {
 					compteurTourne++;
 					stepTurn(Parameters.Direction.LEFT);
+					action = "Tourne pour se sauver";
 					return;
 				} else {
 					compteurMoveBack = 0;
@@ -109,6 +140,18 @@ public class TheAlgo extends Brain {
 					moveBack = false;
 				}
 			}
+		}
+
+		if (avanceDebut) {
+			compteuPlacementTank2 = 0;
+		}
+
+		if (robotNum == 4 && compteuPlacementTank2 < 100 && avanceDebut == false) {
+			compteuPlacementTank2++;
+			myMove();
+			return;
+		} else {
+			avanceDebut = true;
 		}
 
 		if (robotNum == 3) {
@@ -122,7 +165,7 @@ public class TheAlgo extends Brain {
 		}
 
 		if (state == 0 && robotNum == 4 && mouvementDeDepart == false) {
-			// if (compteuPlacementTank2 <= 50) {
+			// if (compteuPlacementTank2 <= 150) {
 			if (!isHeadingSouth()) {
 				stepTurn(Parameters.Direction.RIGHT);
 				action = "Mouvement de départ tourne a droite (1)";
@@ -165,7 +208,9 @@ public class TheAlgo extends Brain {
 			return;
 		}
 
-		for (IRadarResult o : detectRadar()) {
+		for (IRadarResult o :
+
+		detectRadar()) {
 			if (robotNum < 3) {
 				if (o.getObjectType().name().equals("OpponentMainBot")
 						|| o.getObjectType().name().equals("OpponentSecondaryBot")) {
