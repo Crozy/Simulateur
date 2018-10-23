@@ -40,8 +40,15 @@ public class TheAlgo extends Brain {
 	// Compteur move
 	private int compteurMove = 0;
 
+	// compteur tourne
+	private int compteurTourne = 0;
+
 	private static final double HEADINGPRECISION = 0.001;
 	private String action = "";
+
+	// Pour moveback tank
+	private boolean moveBack = false;
+	private int compteurMoveBack = 0;
 
 	public void activate() {
 		// ---PARTIE A MODIFIER/ECRIRE---//
@@ -86,6 +93,24 @@ public class TheAlgo extends Brain {
 
 		sendLogMessage("CompteurMove" + compteurMove + " Action : " + action);
 
+		if (robotNum > 2 && moveBack == true) {
+			if (compteurMoveBack < 200) {
+				compteurMoveBack++;
+				myMoveBack();
+				return;
+			} else {
+				if (compteurTourne < 20) {
+					compteurTourne++;
+					stepTurn(Parameters.Direction.LEFT);
+					return;
+				} else {
+					compteurMoveBack = 0;
+					compteurTourne = 0;
+					moveBack = false;
+				}
+			}
+		}
+
 		if (robotNum == 3) {
 			if (compteuPlacementTank1 <= 50) {
 				// if (!isHeadingSouth()) {
@@ -125,15 +150,6 @@ public class TheAlgo extends Brain {
 
 		}
 
-//		if(robotNum == 3) {
-//			if(detectFront().getObjectType().name().equals("WALL")) {
-//				if(!isHeadingEast()) {
-//				stepTurn(Parameters.Direction.RIGHT);
-//				return;
-//				}
-//			}
-//		}
-
 		if (compteurMove > 2550) {
 			compteurMove = 0;
 		}
@@ -148,17 +164,6 @@ public class TheAlgo extends Brain {
 			compteurRobotCombat++;
 			return;
 		}
-
-//		if (compteurBloque > 500) {
-//			if (isHeadingSouth() || isHeadingEast()) {
-//				compteurBloque = 0;
-//			} else {
-//				action = "Essaye de se débloquer";
-//				stepTurn(Parameters.Direction.RIGHT);
-//				compteurMove = 0;
-//				return;
-//			}
-//		}
 
 		for (IRadarResult o : detectRadar()) {
 			if (robotNum < 3) {
@@ -180,6 +185,7 @@ public class TheAlgo extends Brain {
 			} else {
 				if (o.getObjectType().name().equals("BULLET")) {
 					myMoveBack();
+					moveBack = true;
 					action = "Esquive Ball";
 					return;
 				}
