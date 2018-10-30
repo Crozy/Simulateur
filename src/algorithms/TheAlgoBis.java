@@ -11,12 +11,12 @@ import characteristics.IFrontSensorResult;
 import characteristics.IRadarResult;
 import characteristics.Parameters;
 
-public class TheAlgo extends Brain {
+public class TheAlgoBis extends Brain {
 
 	private static int robotID;
 	private int robotNum = 0;
 
-	public TheAlgo() {
+	public TheAlgoBis() {
 		super();
 	}
 
@@ -36,6 +36,10 @@ public class TheAlgo extends Brain {
 	// Compteur placement des robot tank
 	private int compteuPlacementTank1, compteuPlacementTank2 = 0;
 	private boolean mouvementDeDepart = false;
+
+	// Mouvement de déart des robot tireur
+	private boolean mouvementDeDepart2, mouvementDeDepart3, mouvementDeDepart4 = false;
+	private int compteurDepartRobot1 = 0;
 
 	// Compteur move
 	private int compteurMove = 0;
@@ -97,32 +101,58 @@ public class TheAlgo extends Brain {
 		// : " + myX + " Y : " + myY);
 
 		sendLogMessage("CompteurMove" + compteurMove + " Action : " + action);
+		if (compteurDepartRobot1 < 300) {
+			compteurDepartRobot1++;
+		}
 
-//		if (positionDetecter == false) {
-//			for (IRadarResult o : detectRadar()) {
-//				if (o.getObjectType().name().equals("OpponentMainBot")
-//						|| o.getObjectType().name().equals("OpponentSecondaryBot")) {
-//					directionEnnemi = o.getObjectDirection();
-//					positionDetecter = true;
-//				}
-//			}
-//		}
-//
-//		if (robotNum == 4 && directionEnnemi != 0) {
-//			if (!isHeading(directionEnnemi)) {
-//				stepTurn(Parameters.Direction.LEFT);
-//				action = "Tourne pour suivre ennemi";
-//				return;
-//			} else {
-//				myMove();
-//				action = "Suit ennemi";
-//				return;
-//			}
-//		}
+		// Petit retardateur pour que les 3 rebots avance en même temps
+		if (compteurRobotCombat < 320 && robotNum == 1) {
+			compteurRobotCombat++;
+			return;
+		}
 
-		if (robotNum > 2 && moveBack == true)
+		if (robotNum == 0 && mouvementDeDepart2 == false) {
+			if (!isHeadingSouth()) {
+				stepTurn(Parameters.Direction.RIGHT);
+				compteurMove = 0;
+				action = "Tourne a droite pour contourner";
+				return;
+			} else {
+				mouvementDeDepart2 = true;
+				myMove();
+				action = "Avance";
+				return;
+			}
+		}
 
-		{
+		if (robotNum == 2 && mouvementDeDepart3 == false) {
+			if (!isHeadingSouth()) {
+				stepTurn(Parameters.Direction.RIGHT);
+				compteurMove = 0;
+				action = "Tourne a droite pour contourner";
+				return;
+			} else {
+				mouvementDeDepart3 = true;
+				myMove();
+				action = "Avance";
+				return;
+			}
+		}
+
+		if (robotNum == 1 && mouvementDeDepart4 == false) {
+			if (!isHeadingSouth()) {
+				stepTurn(Parameters.Direction.RIGHT);
+				compteurMove = 0;
+				action = "Tourne a droite pour contourner";
+				return;
+			} else {
+				mouvementDeDepart4 = true;
+				myMove();
+				return;
+			}
+		}
+
+		if (robotNum > 2 && moveBack == true) {
 			if (compteurMoveBack < 200) {
 				compteurMoveBack++;
 				myMoveBack();
@@ -203,10 +233,10 @@ public class TheAlgo extends Brain {
 		}
 
 		// Petit retardateur pour que les 3 rebots avance en même temps
-		if (compteurRobotCombat < 300 && robotNum < 3) {
-			compteurRobotCombat++;
-			return;
-		}
+//		if (compteurRobotCombat < 200 && robotNum < 3) {
+//			compteurRobotCombat++;
+//			return;
+//		}
 
 		for (IRadarResult o :
 
